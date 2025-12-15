@@ -23,9 +23,6 @@ nltk.download("punkt")
 dotenv.load_dotenv()
 
 
-# TODO: Fill me in! Add the `evaluate_business_classification` function
-
-
 def evaluate_extract_general_info_success_rate(
     general_info_list: List[Optional[GeneralInfo]],
 ) -> float:
@@ -62,6 +59,33 @@ def evaluate_title(general_info_list: List[Optional[GeneralInfo]], data: pd.Data
             n_success += 1
 
     accuracy = n_success / n_articles
+    return accuracy
+
+
+def evaluate_business_classification(
+    business_category_list: List[Optional[GeneralInfo]], data: pd.DataFrame
+) -> float:
+    """Return accuracy of classification of whether an article is about business.
+
+    Data should contain:
+    - a column "is_business" with a boolean indicating whether the article is about business.
+
+    The provided list of business categories should be in the same order as the data.
+    """
+
+    correct = 0
+    incorrect = 0
+    for i, row in data.iterrows():
+        if business_category_list[i] is None:
+            continue
+
+        is_about_business_prediction = business_category_list[i].is_about_business
+        if is_about_business_prediction == row["is_business"]:
+            correct += 1
+        else:
+            incorrect += 1
+
+    accuracy = correct / (correct + incorrect)
     return accuracy
 
 
@@ -122,20 +146,20 @@ def run_evaluation(data: pd.DataFrame) -> Dict[str, float]:
     title_accuracy = evaluate_title(general_info_list, data)
     summarization_scores = evaluate_summarization(general_info_list, data)
 
-    # business_classification_accuracy = evaluate_business_classification(
-    #     business_category_list, data
-    # )  # TODO: Uncomment me!
+    business_classification_accuracy = evaluate_business_classification(
+        business_category_list, data
+    )
 
     metrics = {
         "general_info_success_rate": success_rate,
         "title_accuracy": title_accuracy,
-        # "business_classification_accuracy": business_classification_accuracy,  # TODO: Uncomment me!
+        "business_classification_accuracy": business_classification_accuracy,
         "summarization_rouge_1": summarization_scores["rouge-1"],
         "summarization_rouge_2": summarization_scores["rouge-2"],
         "summarization_rouge_l": summarization_scores["rouge-l"],
     }
 
-    print("evaluation", metrics)  # TODO(11-bonus): Convert this to a structured log (use **metrics)
+    logger.info("evaluation", **metrics)
 
     return metrics
 

@@ -1,6 +1,5 @@
 """Defines the components of the Streamlit app defined in the `app` module."""
 
-import os
 from typing import Optional
 
 import dotenv
@@ -12,6 +11,7 @@ from streamlit.delta_generator import DeltaGenerator
 from llmops_training.news_reader.logs import configure_tracer
 from llmops_training.news_reader.app import utils
 from llmops_training.news_reader.extraction import (
+    extract_info_from_articles,
     mock_extract_info_from_articles,
 )
 
@@ -44,17 +44,12 @@ def article_upload_form(position: DeltaGenerator) -> None:
                 st.session_state["articles"].append(pasted_articles)
 
             articles = st.session_state["articles"]
+            logger.info("articles_added", number_articles_added=len(articles))
 
-            # Create a structured log entry for the number of articles added
-            # ... # TODO(11-monitor-functional-metrics): Fill me in! Add log statement
-
-            # Exract structured information using the `mock_extract_info_from_articles` function
-            results, _ = ([None] * len(articles), ...)  # TODO(03-running-the-app/04-modularizing-the-solution): Replace me!
-
-            # TODO(13-feedback-with-trace): Make sure trace IDs from `extract_info_from_articles`
-            # are returned and stored in the session state `st.session_state["trace_ids"]`
+            results, trace_ids = extract_info_from_articles(articles)
 
             st.session_state["results"] = results
+            st.session_state["trace_ids"] = trace_ids
 
             utils.success_message(st, "Articles processed!", seconds=1)
             st.rerun()
@@ -114,21 +109,18 @@ def display_results(position: DeltaGenerator, doc_index: Optional[int]):
             if key == "business_info" and len(value) > 0:
                 st.markdown(f"`{key}`:")
                 for i, value_dict in enumerate(value):
-                    st.write(value_dict)  # TODO(13-collect-feedback): Replace me!
-                    # ... # Add feedback collection with `utils.write_and_collect_feedback`
-                    # use button_key=f"{key}_{i}" and result_key=key
-                    # you can also add json_payload={"business": value_dict["business"]}
-                    # Hint: add your "user_name" to the json_payload for later filtering
-
+                    utils.write_and_collect_feedback(
+                        value_dict,
+                        doc_index,
+                        button_key=f"{key}_{i}",
+                        result_key=key,
+                        json_payload={"business": value_dict["business"]},
+                    )
             elif key != "business_info":
                 if isinstance(value, bool):
                     value = ":green[TRUE]" if value else ":red[FALSE]"
                 value = f"`{key}`: {value}"
-
-                st.write(value)  # TODO(13-collect-feedback): Replace me!
-                # ... # Add feedback collection with `utils.write_and_collect_feedback`
-                # use button_key=key and result_key=key
-                # Hint: add your "user_name" to the json_payload for later filtering
+                utils.write_and_collect_feedback(value, doc_index, button_key=key, result_key=key)
 
         saved = st.button("Save result")
         if saved:

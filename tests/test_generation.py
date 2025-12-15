@@ -1,7 +1,5 @@
 from pydantic import BaseModel
-
 from llmops_training.news_reader.generation import generate_object, generate_text
-
 
 def test_generate_text():
     resp = generate_text(prompt="Say 'Good morning!' in Dutch")

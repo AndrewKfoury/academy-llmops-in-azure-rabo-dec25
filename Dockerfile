@@ -8,8 +8,6 @@
 # Use an official Python runtime as a parent image
 FROM python:3.12-slim
 
-RUN apt-get update && apt-get install -y gcc python3-dev
-
 # Set the working directory to /app
 WORKDIR /app
 
@@ -26,5 +24,4 @@ COPY /src /app/src
 RUN pip install .
 
 # Run app with streamlit
-# TODO: Fill me in! Add the path to our app for streamlit to run
-CMD ["streamlit", "run", "<path_to_our_app", "--server.port", "8081"]
+CMD ["streamlit", "run", "src/llmops_training/news_reader/app/app.py", "--server.port", "8081"]
