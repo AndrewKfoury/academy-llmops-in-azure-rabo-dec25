@@ -39,8 +39,14 @@ docker-run:
 deploy-app-environment:
 	az containerapp env create --name ${APP_ENVIRONMENT} --resource-group ${RESOURCE_GROUP} \
 	--location westeurope \
+	--name llmops-app-${USER_NAME} \ 
+    --resource-group ${RESOURCE_GROUP} \
+    --image ${IMAGE_NAME} \
+    --target-port 8081 \
+    --ingress external \
 	--logs-workspace-id ${LOG_ANALYTICS_WORKSPACE_ID} \
-  	--logs-workspace-key ${LOG_ANALYTICS_WORKSPACE_KEY}
+  	--logs-workspace-key ${LOG_ANALYTICS_WORKSPACE_KEY} \
+	
 
 .PHONY: container-app-deploy
 container-app-deploy:

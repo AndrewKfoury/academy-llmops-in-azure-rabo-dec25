@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main # Use your personal branch name here
+      - test/andrew # Use your personal branch name here
 
 env:
-  USER_NAME: "<your-name>" # TODO: Fill me in!
+  USER_NAME: "andrew" # TODO: Fill me in!
 
 jobs:
   run-checks:

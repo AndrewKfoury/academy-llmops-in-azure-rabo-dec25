@@ -7,9 +7,9 @@ on:
       - main # Use your personal branch name here
 
 env:
-  USER_NAME: "<your-name>" # TODO: Fill me in! Same as in .env
-  CONTAINER_REGISTRY: "<your-container-registry>" # TODO: Fill me in! Name of your Azure Container Registry
-  RESOURCE_GROUP: "<your-resource-group>" # TODO: Fill me in! Same as in .env
+  USER_NAME: "andrew"
+  CONTAINER_REGISTRY: "crllmopstrainingwesteurope"
+  RESOURCE_GROUP: "llmops-training"
   LOCATION: "westeurope"
 
 jobs:
